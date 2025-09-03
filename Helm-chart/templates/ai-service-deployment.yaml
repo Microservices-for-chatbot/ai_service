@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.aiService.name }}-deployment
+  name: {{ .Values.name }}-deployment
 spec:
-  replicas: {{ .Values.aiService.replicaCount }}
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Values.aiService.name }}
+      app: {{ .Values.name }}
   template:
     metadata:
       labels:
-        app: {{ .Values.aiService.name }}
+        app: {{ .Values.name }}
     spec:
       serviceAccountName: ai-service-sa
       containers:
-      - name: {{ .Values.aiService.name }}-container
-        image: "{{ .Values.aiService.image.repository }}:{{ .Values.aiService.image.tag }}"
+      - name: {{ .Values.name }}-container
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         ports:
-        - containerPort: {{ .Values.aiService.containerPort }}
+        - containerPort: {{ .Values.containerPort }}
         env:
         - name: GOOGLE_API_KEY
           valueFrom:
@@ -32,19 +32,19 @@ spec:
         livenessProbe:
           httpGet:
             path: /healthz
-            port: {{ .Values.aiService.containerPort }}
+            port: {{ .Values.containerPort }}
           initialDelaySeconds: 10
           periodSeconds: 5
         readinessProbe:
           httpGet:
             path: /healthz
-            port: {{ .Values.aiService.containerPort }}
+            port: {{ .Values.containerPort }}
           initialDelaySeconds: 10
           periodSeconds: 5
         resources:
           requests:
-            cpu: {{ .Values.aiService.resources.requests.cpu }}
-            memory: {{ .Values.aiService.resources.requests.memory }}
+            cpu: {{ .Values.resources.requests.cpu }}
+            memory: {{ .Values.resources.requests.memory }}
           limits:
-            cpu: {{ .Values.aiService.resources.limits.cpu }}
-            memory: {{ .Values.aiService.resources.limits.memory }}
+            cpu: {{ .Values.resources.limits.cpu }}
+            memory: {{ .Values.resources.limits.memory }}
