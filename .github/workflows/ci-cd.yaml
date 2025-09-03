@@ -1,0 +1,74 @@
+name: CI/CD Pipeline for ai-service
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Install Python test tools
+        run: pip install pylint pytest
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: python
+      - name: Run AI service linter
+        run: pylint ./ai-service
+      - name: Run AI service unit tests
+        run: pytest ./ai-service
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v3
+
+  build-and-push:
+    runs-on: self-hosted
+    needs: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push AI service image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./ai-service
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/ai-service:${{ github.sha }}
+          file: ./ai-service/Dockerfile
+      - name: Scan AI service image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/ai-service:${{ github.sha }}
+          format: "table"
+          exit-code: "0"
+
+  deploy:
+    runs-on: self-hosted
+    needs: build-and-push
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Create or update secrets for AI service
+        run: |
+          echo "
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: ai-service-secrets
+          type: Opaque
+          stringData:
+            GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          " | kubectl apply -f -
+      - name: Deploy with Helm
+        run: |
+          helm upgrade --install ai-service ./ai-service/Helm-chart \
+            --set image.tag=${{ github.sha }}
