@@ -1,4 +1,5 @@
-# AI Service Configuration
+config:
+  chatHistoryUrl: "http://chat-history-service:5002"
 replicaCount: 1
 image:
   repository: amithpalissery/ai-service
