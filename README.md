@@ -1,1 +1,1 @@
-AI service for chatbot
+AI service for chatbot service
