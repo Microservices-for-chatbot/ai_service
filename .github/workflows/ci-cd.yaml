@@ -70,5 +70,5 @@ jobs:
 
       - name: Deploy with Helm
         run: |
-          helm upgrade --install ai-service ./ai-service/Helm-chart \
+          helm upgrade --install ai-service Helm-chart \
             --set image.tag=${{ github.sha }}
