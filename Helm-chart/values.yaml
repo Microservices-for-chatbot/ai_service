@@ -1,3 +1,4 @@
+name: ai-service
 config:
   chatHistoryUrl: "http://chat-history-service:5002"
 replicaCount: 1
