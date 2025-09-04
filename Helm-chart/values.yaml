@@ -13,3 +13,7 @@ resources:
   limits:
     cpu: "500m"
     memory: "1Gi"
+# Added for cross-chart dependencies
+serviceDependencies:
+  frontendAppLabel: "frontend-service"
+  chatHistoryAppLabel: "chat-history-service"
