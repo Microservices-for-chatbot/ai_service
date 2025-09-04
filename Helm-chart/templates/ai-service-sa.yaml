@@ -3,3 +3,6 @@ kind: ServiceAccount
 metadata:
   name: {{ include "ai-service.fullname" . }}-sa
   namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ include "ai-service.name" . }}
+    {{- include "ai-service.labels" . | nindent 4 }}
