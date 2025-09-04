@@ -17,12 +17,12 @@ spec:
     - from:
         - podSelector:
             matchLabels:
-              app: {{ include "frontend.name" . }}
+              app: {{ .Values.serviceDependencies.frontendAppLabel }}
   egress:
     - to:
         - podSelector:
             matchLabels:
-              app: {{ include "chat-history-service.name" . }}
+              app: {{ .Values.serviceDependencies.chatHistoryAppLabel }}
     - to:
         - ipBlock:
             cidr: 0.0.0.0/0
