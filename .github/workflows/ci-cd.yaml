@@ -35,7 +35,7 @@ jobs:
       - name: Build and push AI service image
         uses: docker/build-push-action@v5
         with:
-          context: ./ai-service
+          context: .
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/ai-service:${{ github.sha }}
           file: ./ai-service/Dockerfile
