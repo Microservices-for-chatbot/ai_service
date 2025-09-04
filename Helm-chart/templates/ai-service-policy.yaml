@@ -3,10 +3,13 @@ kind: NetworkPolicy
 metadata:
   name: {{ include "ai-service.fullname" . }}-policy
   namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ include "ai-service.name" . }}
+    {{- include "ai-service.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      app: {{ include "ai-service.fullname" . }}
+      app: {{ include "ai-service.name" . }}
   policyTypes:
     - Ingress
     - Egress
@@ -14,12 +17,12 @@ spec:
     - from:
         - podSelector:
             matchLabels:
-              app: frontend
+              app: {{ include "frontend.name" . }}
   egress:
     - to:
         - podSelector:
             matchLabels:
-              app: chat-history-service
+              app: {{ include "chat-history-service.name" . }}
     - to:
         - ipBlock:
             cidr: 0.0.0.0/0
