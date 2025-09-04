@@ -1,20 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.name }}-deployment
+  name: {{ include "ai-service.fullname" . }}
+  labels:
+    app: {{ include "ai-service.name" . }}
+    {{- include "ai-service.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Values.name }}
+      app: {{ include "ai-service.name" . }}
   template:
     metadata:
       labels:
-        app: {{ .Values.name }}
+        app: {{ include "ai-service.name" . }}
+        {{- include "ai-service.labels" . | nindent 8 }}
     spec:
-      serviceAccountName: ai-service-sa
+      serviceAccountName: {{ include "ai-service.fullname" . }}-sa
       containers:
-      - name: {{ .Values.name }}-container
+      - name: {{ include "ai-service.name" . }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         ports:
         - containerPort: {{ .Values.containerPort }}
