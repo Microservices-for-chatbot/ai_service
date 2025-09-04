@@ -38,7 +38,7 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/ai-service:${{ github.sha }}
-          file: /Dockerfile
+          file: Dockerfile
 
       - name: Scan AI service image with Trivy
         uses: aquasecurity/trivy-action@master
