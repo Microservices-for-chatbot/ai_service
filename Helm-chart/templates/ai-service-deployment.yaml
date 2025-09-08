@@ -31,7 +31,8 @@ spec:
         - name: CHAT_HISTORY_SERVICE_URL
           valueFrom:
             configMapKeyRef:
-              name: app-config
+              # This line is changed to reference the templated ConfigMap name
+              name: {{ include "ai-service.fullname" . }}-config
               key: chatHistoryUrl
         livenessProbe:
           httpGet:
